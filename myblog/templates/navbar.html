@@ -1,0 +1,266 @@
+{% load static %}
+{#<nav class="navbar navbar-inverse navbar-expand-lg navbar-dark bg-dark navbar-static-top">#}
+{#    <div class="container">#}
+{#        <a class="navbar-brand" href="{% url 'home' %}"><span#}
+{#                style="color: goldenrod; font-family: 'Kanit', sans-serif; font-size: 24px">SDU</span><span#}
+{#                style="color: green; font-family: 'Kanit', sans-serif; font-size: 24px">Hub</span></a>#}
+{#        <button#}
+{#                class="navbar-toggler"#}
+{#                type="button"#}
+{#                data-bs-toggle="collapse"#}
+{#                data-bs-target="#navbarSupportedContent"#}
+{#                aria-controls="navbarSupportedContent"#}
+{#                aria-expanded="false"#}
+{#                aria-label="Toggle navigation"#}
+{#        >#}
+{#            <span class="navbar-toggler-icon"></span>#}
+{#        </button>#}
+{#        <div class="collapse navbar-collapse" style="flex-grow: unset" id="navbarSupportedContent">#}
+{#            <ul class="navbar-nav me-auto mb-2 mb-lg-0">#}
+{##}
+{#                <!-- Category Menu Code -->#}
+{#                {% if cat_menu %}#}
+{#                    <li class="nav-item dropdown">#}
+{#                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"#}
+{#                           data-bs-toggle="dropdown" aria-expanded="false">#}
+{#                            Categories#}
+{#                        </a>#}
+{#                        <ul class="dropdown-menu" aria-labelledby="navbarDropdown">#}
+{#                            {% for item in cat_menu %}#}
+{#                                <li><a class="dropdown-item" href="{% url 'category' item|slugify %}">{{ item }}</a>#}
+{#                                </li>#}
+{#                            {% endfor %}#}
+{#                        </ul>#}
+{#                    </li>#}
+{#                {% endif %}#}
+{#                {% if user.is_authenticated %}#}
+{#                    <li class="nav-item">#}
+{#                        <a class="nav-link" href="{% url 'add_post' %}">Add Post</a>#}
+{#                    </li>#}
+{##}
+{#                    <li class="nav-item">#}
+{#                        <a class="nav-link" href="{% url 'add_category' %}">Add Category</a>#}
+{#                    </li>#}
+{#                    <li class="nav-item dropdown">#}
+{#                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"#}
+{#                           data-bs-toggle="dropdown" aria-expanded="false">#}
+{#                            {{ user.first_name }}#}
+{#                            {{ user.last_name|first }}.#}
+{#                        </a>#}
+{#                        <ul class="dropdown-menu" aria-labelledby="navbarDropdown">#}
+{##}
+{#                            <li><a class="dropdown-item" href="{% url 'show_profile_page' user.profile.id %}">Show Profile</a>#}
+{#                            </li>#}
+{#                            <li><a class="dropdown-item" href="{% url 'edit_profile_page' user.profile.id %}">Edit Profile</a>#}
+{#                            </li>#}
+{#                            <li><a class="dropdown-item" href="{% url 'edit_profile' %}">Edit Settings</a>#}
+{#                            </li>#}
+{#                            <div class="dropdown-divider"></div>#}
+{#                            <li><a class="dropdown-item" href="{% url 'logout' %}">Logout</a>#}
+{#                            </li>#}
+{#                        </ul>#}
+{#                    </li>#}
+{##}
+{#                {% else %}#}
+{#                    <li class="nav-item">#}
+{#                        <a class="nav-link" href="{% url 'login' %}">Login</a>#}
+{#                    </li>#}
+{#                    <li class="nav-item">#}
+{#                        <a class="nav-link" href="{% url 'register' %}">Register</a>#}
+{#                    </li>#}
+{#                {% endif %}#}
+{#            </ul>#}
+{#        </div>#}
+{#    </div>#}
+{#</nav>#}
+{##}
+
+<!--
+  - #HEADER
+-->
+
+<header>
+
+    <div class="nb_container">
+
+        <nav class="nb_navbar">
+
+            <a href="{% url 'home' %}">
+                <img src="{% static 'myblog/images/logo-light.svg' %}" alt="logo" width="150"
+                     class="logo-light">
+                <img src="{% static 'myblog/images/logo-dark.svg' %}" alt="logo" width="150"
+                     class="logo-dark">
+            </a>
+
+            <div class="nb_btn-group">
+
+                <button class="theme-btn theme-btn-mobile light">
+                    <ion-icon name="moon" class="moon"></ion-icon>
+                    <ion-icon name="sunny" class="sun"></ion-icon>
+                </button>
+
+                <button class="nav-menu-btn">
+                    <ion-icon name="menu-outline"></ion-icon>
+                </button>
+
+            </div>
+
+            <div class="nb_flex-wrapper">
+
+                <ul class="desktop-nav" style="margin: 0">
+                    {#                    <li>#}
+                    {#                        <a href="#" class="nav-link">Home</a>#}
+                    {#                    </li>#}
+                    {##}
+                    {#                    <li>#}
+                    {#                        <a href="#" class="nav-link">About Me</a>#}
+                    {#                    </li>#}
+                    {##}
+                    {#                    <li>#}
+                    {#                        <a href="#" class="nav-link">Contact</a>#}
+                    {#                    </li>#}
+
+                    {% if cat_menu %}
+                        <li class="nav-item">
+                            <div class="dropdown nav-link">
+                                <button class="dropbtn">Categories</button>
+                                <div class="dropdown-content">
+                                    {% for item in cat_menu %}
+                                        <a href="{% url 'category' item|slugify %}">{{ item }}</a>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </li>
+                    {% endif %}
+                    {% if user.is_authenticated %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'add_post' %}">Create Post</a>
+                        </li>
+                        <li class="nav-link" style="display: flex; flex-direction: row;">
+                            <div class="dropdown">
+                                <button class="dropbtn">
+                                    <div class="profile_img">
+                                        {% if user.profile.profile_pic %}
+                                            <img src="{{ user.profile.profile_pic.url }}"
+                                                 alt="author's avatar">
+                                        {% else %}
+                                            <img src="{% static 'myblog/images/default-profile-pic.jpg' %}"
+                                                 alt="author's avatar">
+                                        {% endif %}
+                                    </div>
+                                    {{ user.first_name }} {{ user.last_name|first }}.
+                                </button>
+                                <div class="dropdown-content_right">
+                                    {% if user.profile.id %}
+                                        <a class="dropdown-item" href="{% url 'show_profile_page' user.profile.id %}">My
+                                            Profile</a>
+                                        <a class="dropdown-item" href="{% url 'my_posts' user.id %}">My
+                                            Posts</a>
+                                        <a class="dropdown-item" href="{% url 'liked_posts' user.id %}">&#x2764;Liked
+                                            Posts</a>
+                                        <a class="dropdown-item" href="{% url 'edit_profile_page' user.profile.id %}">Edit
+                                            Profile</a>
+                                    {% else %}
+                                        <a class="dropdown-item" href="{% url 'create_profile_page' %}">Create
+                                            Profile</a>
+                                    {% endif %}
+                        <a class="dropdown-item" href="{% url 'edit_profile' %}">Edit Settings</a>
+                        <hr style="margin: 0; padding: 0;">
+                        <a class="dropdown-item" href="{% url 'logout' %}">Logout</a>
+                        </div>
+                        </div>
+                        </li>
+                    {% else %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'login' %}">Login</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'register' %}">Register</a>
+                        </li>
+                    {% endif %}
+    </ul>
+
+    <button id="theme-toggle" class="theme-btn theme-btn-desktop light">
+        <ion-icon name="moon" class="moon"></ion-icon>
+        <ion-icon name="sunny" class="sun"></ion-icon>
+    </button>
+
+    </div>
+
+    <div class="mobile-nav">
+
+        <button class="nav-close-btn">
+            <ion-icon name="close-outline"></ion-icon>
+        </button>
+
+        <div class="wrapper">
+
+            <p class="h3 nav-title">{{ user.first_name }} {{ user.last_name }}</p>
+
+            <ul>
+                {% if user.is_authenticated %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'add_post' %}">Add Post</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{% url 'my_posts' user.id %}" class="nav-link">My Posts</a>
+                    </li>
+                    {% if user.profile.id %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'show_profile_page' user.profile.id %}">My
+                                Profile</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'edit_profile_page' user.profile.id %}">Edit
+                                Profile</a>
+                        </li>
+
+                    {% else %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'create_profile_page' %}">Create
+                                Profile</a>
+                        </li>
+
+                    {% endif %}
+                    <li class="nav-item">
+                        <a href="{% url 'edit_profile' %}" class="nav-link">Edit Settings</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{% url 'logout' %}" class="nav-link">Logout</a>
+                    </li>
+                {% else %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'login' %}">Login</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'register' %}">Register</a>
+                    </li>
+                {% endif %}
+            </ul>
+
+        </div>
+
+        <div>
+
+            <p class="h3 nav-title">Categories</p>
+
+            <ul>
+                {% if cat_menu %}
+                    {% for item in cat_menu %}
+                        <li class="nav-item">
+                            <a href="{% url 'category' item|slugify %}"
+                               class="nav-link">{{ item }}</a>
+                        </li>
+                    {% endfor %}
+                {% endif %}
+            </ul>
+
+        </div>
+    </div>
+
+    </nav>
+
+    </div>
+
+</header>
+

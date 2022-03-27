@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    Edit BLog Post
+{% endblock %}
+{% block content %}
+    <main>
+        <div class="main">
+            <div class="container">
+                <div style="max-width: 1080px; margin: auto; padding-bottom: 3rem;">
+                    {% if user.is_authenticated %}
+                        {% if user.id == post.author.id or user.is_superuser%}
+                        <h1>Update Post...</h1>
+                        <form method="POST">
+                            {% csrf_token %}
+                            {{ form.media }}
+                            {{ form.as_p }}
+                            <button class="btn btn-primary">Update</button>
+                            <a href="javascript:history.back()" class="btn btn-secondary">Back</a>
+                        </form>
+                            {% endif %}
+                    {% else %}
+                        You are not allowed here!
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </main>
+{% endblock %}

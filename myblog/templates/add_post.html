@@ -1,0 +1,105 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+    Create A New BLog Post
+{% endblock %}
+
+{% block content %}
+    <main>
+        <div class="main">
+            <div class="container">
+                <div style="max-width: 1080px; margin: auto; padding-bottom: 2rem">
+                    <!-- The Modal -->
+                    <div id="myModal" class="modal">
+
+                        <!-- Modal content -->
+                        <div class="modal-content">
+                            <div>
+                                <form action="{% url 'add_category' %}" method="POST">
+                                    {% csrf_token %}
+                                    <p>
+                                        <input type="text" id="id_name" name="name" class="form-control">
+                                    </p>
+                                    <button class="nb_btn nb_btn-secondary">Add Category</button>
+                                </form>
+                            </div>
+                        </div>
+
+                    </div>
+                    {% if user.is_authenticated %}
+                        <h1>Add Post...</h1>
+                        <form method="POST" enctype="multipart/form-data">
+                            {% csrf_token %}
+                            {{ form.media }}
+                            <p>
+                                <label for="id_title">{{ form.title.label }}:</label>
+                                {{ form.title }}
+                            </p>
+
+                            <p>
+                                <label for="id_title_tag">{{ form.title_tag.label }}:</label>
+                                {{ form.title_tag }}
+                            </p>
+
+                            <p>
+                                <label for="id_body">{{ form.header_image.label }}:</label>
+                                {{ form.header_image }}
+                            </p>
+
+                            <p>
+                                <label for="id_snippet">{{ form.snippet.label }}:</label>
+                                {{ form.snippet }}
+                            </p>
+
+                            <p>
+                                {{ form.author }}
+                            </p>
+                            <p>
+                                <label for="abuse">{{ form.category.label }}:</label>
+                                <select id="abuse" class="form-control" name="category">
+                                    {% for item in cat_menu %}
+                                        <option name="option" value="{{ item }}">{{ item }}</option>
+                                    {% endfor %}
+                                </select>
+                            </p>
+                            <p>
+                                <label for="myCheckbox" class="btn btn-secondary">New Category</label>
+                                <input type="checkbox" id="myCheckbox" hidden>
+                            </p>
+                            <p>
+                                <label for="id_body">Body:</label>
+                                {{ form.body }}
+                            </p>
+                            <button class="nb_btn nb_btn-secondary">Post</button>
+                        </form>
+                        </div>
+                        </div>
+                    {% else %}
+                        You are not allowed here!
+                    {% endif %}
+        </div>
+    </main>
+    <script type="text/javascript">
+        window.onload = function () {
+            let name = "{{ user.id }}";
+            document.getElementById("author_id").value = name;
+
+            $('#myCheckbox').on('change', function (e) {
+                if (e.target.checked) {
+                    modal.style.display = "block";
+                } else {
+                    modal.style.display = "none";
+                }
+            });
+            {#var checkBox = document.getElementById("myBtn");#}
+            var modal = document.getElementById("myModal");
+            window.onclick = function (event) {
+                if (event.target === modal) {
+                    modal.style.display = "none";
+                    $('#myCheckbox').prop("checked", false);
+                }
+            }
+        }
+    </script>
+{% endblock %}

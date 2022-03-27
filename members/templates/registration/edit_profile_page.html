@@ -1,0 +1,70 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+    Edit Profile Page
+{% endblock %}
+
+{% block content %}
+    <main>
+        <div class="main" style="padding-bottom: 40px;">
+            <div class="container">
+                <div style="max-width: 1080px; margin: auto;">
+                    {% if user.is_authenticated %}
+                        {% if user.id == profile.user.id %}
+                            <h1>Edit Profile Page...</h1>
+
+                            <form method="POST" enctype="multipart/form-data">
+                                {% csrf_token %}
+                                <p>
+                                    <label for="id_{{ form.bio.label|lower }}">{{ form.bio.label }}:</label>
+                                    {{ form.bio }}
+                                </p>
+                                <p>
+                                    <label for="id_{{ form.profession.label|lower }}">{{ form.profession.label }}:</label>
+                                    {{ form.profession }}
+                                </p>
+                                <p>
+                                    <label for="id_{{ form.profile_pic.label|lower }}">{{ form.profile_pic.label }}:</label>
+                                    {{ form.profile_pic }}
+                                </p>
+                                <p>
+                                    <label for="id_{{ form.website_url.label|lower }}">{{ form.website_url.label }}:</label>
+                                    {{ form.website_url }}
+                                </p>
+                                <p>
+                                    <label for="id_{{ form.facebook_url.label|lower }}">{{ form.facebook_url.label }}:</label>
+                                    {{ form.facebook_url }}
+                                </p>
+                                <p>
+                                    <label for="id_{{ form.twitter_url.label|lower }}">{{ form.twitter_url.label }}:</label>
+                                    {{ form.twitter_url }}
+                                </p>
+                                <p>
+                                    <label for="id_{{ form.instagram_url.label|lower }}">{{ form.instagram_url.label }}:</label>
+                                    {{ form.instagram_url }}
+                                </p>
+                                <p>
+                                    <label for="id_{{ form.pinterest_url.label|lower }}">{{ form.pinterest_url.label }}:</label>
+                                    {{ form.pinterest_url }}
+                                </p>
+                                <p>
+                                    <label for="id_{{ form.telegram_url.label|lower }}">{{ form.telegram_url.label }}:</label>
+                                    {{ form.telegram_url }}
+                                </p>
+                                <button class="nb_btn nb_btn-secondary">Update Profile Page</button>
+                            </form>
+                        {% else %}
+                            <h4>You are not correct User to Edit this Page!</h4>
+                        {% endif %}
+                    {% else %}
+                        <h4>You are not allowed here!</h4>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </main>
+    <script>
+
+    </script>
+{% endblock %}

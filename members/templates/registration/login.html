@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    Login
+{% endblock %}
+
+{% block content %}
+    <main>
+        <div class="main">
+            <div class="container">
+                <div style="max-width: 1080px; margin: auto; padding-bottom: 2rem">
+                    <br/>
+                    <h1>Login</h1>
+                    <br/>
+                    <form method="POST">
+                        {% csrf_token %}
+                        {{ form.as_p }}
+                        <button class="nb_btn nb_btn-secondary">Login</button>
+                    </form>
+                </div>
+            </div>
+            <script>
+                var element = document.getElementById("id_username");
+                var element2 = document.getElementById("id_password");
+                element.classList.add("form-control");
+                element2.classList.add("form-control");
+            </script>
+        </div>
+    </main>
+{% endblock %}

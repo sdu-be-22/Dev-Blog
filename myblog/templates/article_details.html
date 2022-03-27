@@ -1,0 +1,168 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load custom_tags %}
+{% block title %}
+    {{ post.title_tag }}
+{% endblock %}
+
+{% block content %}
+    <main>
+        <div class="main">
+            <div class="container">
+                <div style="max-width: 1080px; margin: auto">
+                    <h3 class="nb_h1">{{ post.title }}</h3>
+                    <p class="article_info">By:
+                        <a href="{% url 'show_profile_page' post.author.profile.id %}">{{ post.author.first_name }}
+                        {{ post.author.last_name }}</a>  &#183;
+                        {{ post.post_date }} &#183;
+{#                        {% if post.author.profile.website_url %}#}
+{#                            <a target="_blank" href="{{ post.author.profile.website_url }}"><img#}
+{#                                    src="{% static 'myblog/images/icons/web.png' %}" width="36px" height="36px" alt=""#}
+{#                                    class="ic_co"></a>#}
+{#                        {% endif %}#}
+{#                        {% if post.author.profile.facebook_url %}#}
+{#                            <a target="_blank" href="{{ post.author.profile.facebook_url }}"><img#}
+{#                                    src="{% static 'myblog/images/icons/premium-icon-facebook-3670271.png' %}"#}
+{#                                    width="36px" height="36px" alt="" class="ic_co"></a>#}
+{#                        {% endif %}#}
+{#                        {% if post.author.profile.twitter_url %}#}
+{#                            <a target="_blank" href="{{ post.author.profile.twitter_url }}"><img#}
+{#                                    src="{% static 'myblog/images/icons/premium-icon-twitter-3669691.png' %}"#}
+{#                                    width="36px" height="36px" alt="" class="ic_co"></a>#}
+{#                        {% endif %}#}
+{#                        {% if post.author.profile.instagram_url %}#}
+{#                            <a target="_blank" href="{{ post.author.profile.instagram_url }}"><img#}
+{#                                    src="{% static 'myblog/images/icons/premium-icon-instagram-4494468.png' %}"#}
+{#                                    width="36px" height="36px" alt="" class="ic_co"></a>#}
+{#                        {% endif %}#}
+{#                        {% if post.author.profile.pinterest_url %}#}
+{#                            <a target="_blank" href="{{ post.author.profile.pinterest_url }}"><img#}
+{#                                    src="{% static 'myblog/images/icons/premium-icon-pinterest-2175205.png' %}"#}
+{#                                    width="36px" height="36px" alt="" class="ic_co"></a>#}
+{#                        {% endif %}#}
+{#                        {% if post.author.profile.telegram_url %}#}
+{#                            <a target="_blank" href="{{ post.author.profile.telegram_url }}"><img#}
+{#                                    src="{% static 'myblog/images/icons/icon-telegram.png' %}" width="16px"#}
+{#                                    height="16px" alt="" class="ic_co2"></a>#}
+{#                        {% endif %}#}
+                        Read time: {{ post.body|get_read_time }} minute{{ post.body|get_read_time|pluralize }}
+                        <span class="icon-box" style="align-items: center; float: right;"><ion-icon name="eye-outline" style="margin-bottom: -2px"></ion-icon> {{ post.total_views }} views</span>
+                    </p>
+                    <hr/>
+                    {{ post.body|safe }}
+                    <hr>
+                    {% if user.is_authenticated %}
+                        {% if user.id == post.author.id or user.is_superuser %}
+                            <a href="{% url 'update_post' post.pk %}" class="btn btn-primary">Edit</a>
+                            <!-- <a href="{% url 'home' %}">Back</a> -->
+                            <a href="{% url 'delete_post' post.pk %}" class="btn btn-danger">Delete</a>
+                        {% endif %}
+                    {% endif %}
+                    <a href="{% url 'home' %}" class="btn btn-secondary">Back</a>
+                    <hr>
+                    <form action="{% url 'like_post' post.pk %}" method="POST">
+                        {% if user.is_authenticated %}
+                            {% csrf_token %}
+                            {% if liked %}
+                                <div style="display: flex; align-items: end">
+                                    <button type="submit" name="post_id" value="{{ post.id }}"
+                                            class="btn btn-danger btn-sm" style="padding: 2px; align-items: center">
+                                        <ion-icon name="heart-dislike"
+                                                  style="width: 1rem; height: 1rem; margin-bottom: -3px"></ion-icon>
+                                        Unlike
+                                    </button>
+                                    <h5 style="display: block; margin: 0; padding-left: 4px"> &#183; {{ total_likes }}
+                                        Likes</h5>
+                                </div>
+                            {% else %}
+                                <div style="display: flex; align-items: center;">
+                                    <button type="submit" name="post_id" value="{{ post.id }}"
+                                            class="btn btn-primary btn-sm" style="padding: 2px; align-items: center">
+                                        <ion-icon style="width: 1rem; height: 1rem; margin-bottom: -3px"
+                                                  name="heart"></ion-icon>
+                                        Like
+                                    </button>
+                                    <h5 style="display: block; margin: 0; padding-left: 4px"> &#183; {{ total_likes }}
+                                        Likes</h5>
+                                </div>
+                            {% endif %}
+                        {% else %}
+                            <p><a href="{% url 'login' %}">Login</a> to like</p>
+                        {% endif %}
+                    </form>
+
+                    <br>
+                    <div class="comment-section">
+                        {% if not post.comments.all %}
+                            <h4>No Comments Yet...</h4>
+                        {% else %}
+                            {% if user.is_authenticated %}
+                                <form action="{% url 'add_comment' post.pk %}" method="POST">
+                                    {% csrf_token %}
+                                    <input type="hidden" id="id_comment_name" name="name" class="form-control">
+                                    <p>
+                                        <label for="id_comment_body">Comment:</label>
+                                        <textarea type="text" id="id_comment_body" name="body" class="form-control">
+                                    </textarea>
+                                    </p>
+                                    <input type="hidden" id="author_id" name="user" class="form-control">
+                                    <button class="nb_btn nb_btn-secondary">Add Comment</button>
+                                </form>
+                            {% else %}
+                                <h4>Login to leave comment</h4>
+                            {% endif %}
+                            <div style="display: flex; align-items: center; justify-content: center"><h4>
+                                {{ post.comments.all.count }} comment{{ post.comments.all.count|pluralize }}</h4></div>
+                            {% for comment in post.comments.all reversed %}
+                                <div class="comment-card">
+                                    <div class="blog-content-wrapper">
+                                        <div class="wrapper-flex">
+                                            <div class="profile-wrapper">
+                                                {% if comment.user.profile.profile_pic %}
+                                                    <img src="{{ comment.user.profile.profile_pic.url }}"
+                                                         alt="author's avatar" width="50" height="50"
+                                                         style="object-fit: cover">
+                                                {% else %}
+                                                    <img src="{% static 'myblog/images/default-profile-pic.jpg' %}"
+                                                         alt="author's avatar" width="50" height="50">
+                                                {% endif %}
+                                            </div>
+
+                                            <div class="wrapper">
+                                                <a href="{% url 'show_profile_page' comment.user.profile.id %}"
+                                                   class="nb_h4">{{ comment.name }}</a>
+
+                                                <p class="text-sm">
+                                                    <time datetime="{{ comment.date_added }}">{{ comment.date_added|date }}</time>
+                                                    <span class="separator"></span>
+                                                    <ion-icon name="time-outline"></ion-icon>
+                                                    <time datetime="{{ comment.date_added|timesince }}">{{ comment.date_added|time }}
+                                                        - {{ comment.date_added|timesince }}
+                                                        ago
+                                                    </time>
+                                                </p>
+                                            </div>
+                                        </div>
+                                        <div class="comment-block">
+                                            <p>{{ comment.body }}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+    <script>
+        const nameField = document.getElementById('id_comment_name');
+        {% if user.is_authenticated %}
+            nameField.value = '{{ user.first_name }} {{ user.last_name }}';
+            let name = "{{ user.id }}";
+            document.getElementById("author_id").value = name;
+        {% else %}
+            nameField.value = 'Guest';
+        {% endif %}
+    </script>
+{% endblock %}

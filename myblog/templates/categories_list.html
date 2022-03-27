@@ -1,0 +1,192 @@
+{#<div>#}
+{#    <div class="card">#}
+{#        <div class="card-header">#}
+{#            Categories#}
+{#        </div>#}
+{#        <div class="card-body" style="padding: 0">#}
+{#            {% for item in cat_menu %}#}
+{#                <li style="list-style: none;">#}
+{#                    <a class="dropdown-item" style="padding: 8px 16px"#}
+{#                       href="{% url 'category' item|slugify %}">{{ item }}</a>#}
+{#                </li>#}
+{#            {% endfor %}#}
+{#        </div>#}
+{#    </div>#}
+{#</div>#}
+
+{% load custom_tags %}
+{% load static %}
+<div class="topics">
+    <h2 class="nb_h2">Categories</h2>
+    {% for item in cat_menu %}
+        <a href="{% url 'category' item %}" class="topic-btn">
+            <div class="icon-box">
+                <h2 class="nb_h2">#</h2>
+            </div>
+            <p>{{ item|capfirst }}</p>
+        </a>
+    {% endfor %}
+</div>
+
+{#<div class="tags">#}
+{##}
+{#    <h2 class="nb_h2">Tags</h2>#}
+{##}
+{#    <div class="wrapper">#}
+{##}
+{#        <button class="hashtag">#mongodb</button>#}
+{#        <button class="hashtag">#nodejs</button>#}
+{#        <button class="hashtag">#a11y</button>#}
+{#        <button class="hashtag">#mobility</button>#}
+{#        <button class="hashtag">#inclusion</button>#}
+{#        <button class="hashtag">#webperf</button>#}
+{#        <button class="hashtag">#optimize</button>#}
+{#        <button class="hashtag">#performance</button>#}
+{##}
+{#    </div>#}
+{#</div>#}
+
+{#<div class="contact">#}
+{##}
+{#    <h2 class="nb_h2">Let's Talk</h2>#}
+{##}
+{#    <div class="wrapper">#}
+{##}
+{#        <p>#}
+{#            Do you want to learn more about how I can help your company overcome problems? Let us have a#}
+{#            conversation.#}
+{#        </p>#}
+{##}
+{#        <ul class="social-link list-unstyled">#}
+{##}
+{#            <li>#}
+{#                <a href="#" class="icon-box discord">#}
+{#                    <ion-icon name="logo-discord"></ion-icon>#}
+{#                </a>#}
+{#            </li>#}
+{##}
+{#            <li>#}
+{#                <a href="#" class="icon-box twitter">#}
+{#                    <ion-icon name="logo-twitter"></ion-icon>#}
+{#                </a>#}
+{#            </li>#}
+{##}
+{#            <li>#}
+{#                <a href="#" class="icon-box facebook">#}
+{#                    <ion-icon name="logo-facebook"></ion-icon>#}
+{#                </a>#}
+{#            </li>#}
+{##}
+{#        </ul>#}
+{##}
+{#    </div>#}
+{##}
+{#</div>#}
+
+<div class="topics counter_container">
+    <h2 class="nb_h2">Authors with the most likes:</h2>
+    {% for user_like in user_likes|split:";" %}
+        {% for user_username in user_like|first_word:":"|split:" " %}
+            {% for user in users %}
+                {% if user.username == user_username %}
+                    <div class="contact counter_place" style="margin-bottom: 16px">
+                        <div class="wrapper-flex wrapper" style="padding: 1rem">
+                                <h3 style="margin-bottom: 0"></h3>
+                            <div class="profile-wrapper">
+                                {% if user.profile.profile_pic %}
+                                    <img src="{{ user.profile.profile_pic.url }}"
+                                         alt="author's avatar" width="50" height="50" style="object-fit: cover">
+                                {% else %}
+                                    <img src="{% static 'myblog/images/default-profile-pic.jpg' %}"
+                                         alt="author's avatar" width="50" height="50" style="object-fit: cover">
+                                {% endif %}
+                            </div>
+                            <div style="margin-left: 1rem">
+                                <a href="{% url 'show_profile_page' user.profile.id %}"
+                                   class="nb_h4">{{ user.first_name }} {{ user.last_name }}</a>
+                                <p class="text-sm">
+                                    Total likes: {{ user_like|last_word:":"|split:" "|first }}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
+            {% endfor %}
+        {% endfor %}
+    {% endfor %}
+</div>
+
+
+<div class="topics">
+    <h2 class="nb_h2">Most Liked Posts:</h2>
+    {% for post in most_liked_post %}
+        <div class="contact" style="margin-bottom: 16px">
+            <div class="wrapper" style="padding: 1rem">
+                <div>
+                    {% if post.header_image %}
+                        <img src="{{ post.header_image.url }}"
+                             alt="..."
+                             width="250" class="blog-banner-img" style="border-radius: 5px">
+                    {% else %}
+                        <img src="{% random_image "images/random_images/" %}"
+                             alt="Building microservices with Dropwizard, MongoDB & Docker"
+                             width="250" class="blog-banner-img">
+                    {% endif %}
+                </div>
+
+                <div class="blog-content-wrapper">
+
+                    <button class="blog-topic text-tiny">{{ post.category|capfirst }}</button>
+
+                    <h3>
+                        <a href="{% url 'article-detail' post.pk %}" class="nb_h3">
+                            {{ post.title }}
+                        </a>
+                    </h3>
+
+                    <p class="blog-text">
+                        {{ post.snippet }}
+                    </p>
+
+                    <div class="wrapper-flex">
+                        <div class="profile-wrapper">
+                            {% if post.author.profile.profile_pic %}
+                                <img src="{{ post.author.profile.profile_pic.url }}"
+                                     alt="author's avatar" width="50" height="50" style="object-fit: cover">
+                            {% else %}
+                                <img src="{% static 'myblog/images/default-profile-pic.jpg' %}"
+                                     alt="author's avatar" width="50" height="50" style="object-fit: cover">
+                            {% endif %}
+                        </div>
+                        <div style="margin-left: 1rem">
+                            <a href="{% url 'show_profile_page' post.author.profile.id %}"
+                               class="nb_h4">{{ post.author.first_name }} {{ post.author.last_name }}</a>
+                            <p class="text-sm">
+                                <ion-icon name="time-outline"></ion-icon>
+                                <time datetime="{{ post.post_date }}">{{ post.post_date|date }}</time>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+</div>
+<div class="newsletter">
+
+    <h2 class="nb_h2">Newsletter</h2>
+
+    <div class="wrapper">
+
+        <p>
+            Subscribe to our newsletter to be among the first to keep up with the latest updates.
+        </p>
+        <form action="{% url 'subscribe_newsletter' %}" method="POST">
+            {% csrf_token %}
+            <input type="text" name="name" placeholder="Enter name" required>
+            <input type="email" name="email" placeholder="Email Address" required>
+
+            <button type="submit" class="nb_btn nb_btn-primary">Subscribe</button>
+        </form>
+    </div>
+</div>

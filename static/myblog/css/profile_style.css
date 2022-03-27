@@ -1,0 +1,35 @@
+.h2_p {
+    font-size: 3rem;
+}
+.ic_co {
+    margin: 0.5rem;
+}
+.light-theme .ic_co {
+    filter: invert(39%) sepia(11%) saturate(2913%) hue-rotate(182deg) brightness(97%) contrast(89%);
+}
+
+.light-theme .ic_co:hover {
+    border-radius: 50%;
+    background: var(--action-primary);
+        color: var(--white);
+}
+
+.dark-theme .ic_co {
+    filter: invert(39%) sepia(11%) saturate(2913%) hue-rotate(182deg) brightness(97%) contrast(89%);
+}
+
+.dark-theme .ic_co:hover {
+    border-radius: 50%;
+    background: var(--action-primary);
+        color: var(--white);
+}
+
+.dark-theme .ic_co2 {
+    filter: invert(39%) sepia(11%) saturate(2913%) hue-rotate(182deg) brightness(97%) contrast(89%);
+}
+
+.dark-theme .ic_co2:hover {
+    border-radius: 50%;
+    background: var(--action-primary);
+        color: var(--white);
+}

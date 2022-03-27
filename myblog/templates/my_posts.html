@@ -1,0 +1,95 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load custom_tags %}
+{% block content %}
+    <main>
+        <div class="main">
+            <div class="container">
+                <div style="max-width: 1080px; margin: auto">
+                    <div class="blog">
+                        {% if my_posts %}
+                            <h2 class="nb_h2">My posts: {{ my_posts.all.count }}</h2>
+                            <div class="blog-card-group">
+                                {% for post in my_posts %}
+                                    <div class="blog-card">
+                                        <div class="blog-card-banner">
+                                            {% if post.header_image %}
+                                                <img src="{{ post.header_image.url }}"
+                                                     alt="..."
+                                                     width="250" class="blog-banner-img">
+                                            {% else %}
+                                                <img src="{% random_image "images/random_images/" %}"
+                                                     alt="..."
+                                                     width="250" class="blog-banner-img">
+                                            {% endif %}
+                                        </div>
+
+                                        <div class="blog-content-wrapper">
+
+                                            <button class="blog-topic text-tiny">{{ post.category|capfirst }}</button>
+                                            {% if user.is_authenticated %}
+                                                {% if user.id == post.author.id or user.is_superuser %}
+                                                    <div style="float: right">
+                                                        <a href="{% url 'update_post' post.pk %}"
+                                                           class="blog-topic text-tiny"
+                                                        >Edit</a>
+                                                        <!-- <a href="{% url 'home' %}">Back</a> -->
+                                                        <a href="{% url 'delete_post' post.pk %}"
+                                                           class="blog-topic text-tiny"
+                                                        >Delete</a>
+                                                    </div>
+                                                {% endif %}
+                                            {% endif %}
+                                            <h3>
+                                                <a href="{% url 'article-detail' post.pk %}" class="nb_h3">
+                                                    {{ post.title }}
+                                                </a>
+                                            </h3>
+
+                                            <p class="blog-text">
+                                                {{ post.snippet }}
+                                            </p>
+
+                                            <div class="wrapper-flex">
+
+                                                <div class="profile-wrapper">
+                                                    {% if post.author.profile.profile_pic %}
+                                                        <img src="{{ post.author.profile.profile_pic.url }}"
+                                                             alt="author's avatar" width="50">
+                                                    {% else %}
+                                                        <img src="{% static 'myblog/images/default-profile-pic.jpg' %}"
+                                                             alt="author's avatar" width="50">
+                                                    {% endif %}
+                                                </div>
+
+                                                <div class="wrapper">
+                                                    <a href="{% url 'show_profile_page' post.author.profile.id %}"
+                                                       class="nb_h4">{{ post.author.first_name }} {{ post.author.last_name }}</a>
+
+                                                    <p class="text-sm">
+                                                        <time datetime="{{ post.post_date }}">{{ post.post_date }}</time>
+                                                        <span class="separator"></span>
+                                                        <ion-icon name="time-outline"></ion-icon>
+                                                        <time datetime="{{ post.post_date|timesince }}">{{ post.post_date|timesince }}
+                                                            ago
+                                                        </time>
+                                                    </p>
+                                                </div>
+
+                                            </div>
+
+                                        </div>
+
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            <br>
+                            <h2>Sorry this page doesn't exist!</h2>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+{% endblock %}

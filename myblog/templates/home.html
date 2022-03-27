@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load custom_tags %}
+
+{% block content %}
+
+    <!--
+      - #HERO SECTION
+    -->
+
+    <div class="hero">
+
+        <div class="nb_container">
+
+            <div class="left">
+
+                <h1 class="nb_h1">
+                    Hi! This is a <br><b>Dev&nbsp;Blog</b>.
+                    <br>
+                </h1>
+
+                <p class="nb_h3">
+                    A Lifestyle A Day Helps You Work,<br> Rest And Play.
+                </p>
+
+                {#                <div class="nb_btn-group">#}
+                {#                    <a href="#" class="nb_btn nb_btn-primary">Contact Me</a>#}
+                {#                    <a href="#" class="nb_btn nb_btn-secondary">About Me</a>#}
+                {#                </div>#}
+            </div>
+
+            <div class="right">
+
+                <div class="pattern-bg"></div>
+                <div class="img-box">
+                    <img src="{% random_image "images/main_section/" %}" alt="Main" class="heroimg" width="350">
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <main>
+        <div class="main">
+            <div class="nb_container">
+                {% include 'posts.html' %}
+                {% include 'aside.html' %}
+            </div>
+        </div>
+    </main>
+{% endblock %}

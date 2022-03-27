@@ -1,0 +1,45 @@
+{#{% extends 'base.html' %}#}
+{#{% load static %}#}
+{##}
+{#{% block title %}#}
+{#    Comment on Blog Post#}
+{#{% endblock %}#}
+{##}
+{#{% block content %}#}
+{#    <main>#}
+{#        <div class="main">#}
+{#            <div class="container">#}
+{#                <div style="max-width: 1080px; margin: auto; padding-bottom: 2rem">#}
+{#                    <h1>Add Comment...</h1>#}
+{#                    {% if user.is_authenticated %}#}
+{#                        <form method="POST" enctype="multipart/form-data">#}
+{#                            {% csrf_token %}#}
+{#                            <p>#}
+{#                                {{ form.name }}#}
+{#                            </p>#}
+{#                            <p>#}
+{#                                <label for="id_body">{{ form.body.label }}:</label>#}
+{#                                {{ form.body }}#}
+{#                            </p>#}
+{#                            <button class="nb_btn nb_btn-secondary">Add Comment</button>#}
+{#                        </form>#}
+{#                    {% else %}#}
+{#                        <form method="POST" enctype="multipart/form-data">#}
+{#                            {% csrf_token %}#}
+{#                            {{ form.as_p }}#}
+{#                            <button class="nb_btn nb_btn-secondary">Add Comment</button>#}
+{#                        </form>#}
+{#                    {% endif %}#}
+{#                </div>#}
+{#            </div>#}
+{#        </div>#}
+{#    </main>#}
+{#        {% if user.is_authenticated %}#}
+{#            <script>#}
+{#            const nameField = document.getElementById('id_name');#}
+{#            nameField.value = '{{ user.first_name }} {{ user.last_name }}';#}
+{#            nameField.setAttribute("type", "hidden");#}
+{#            </script>#}
+{#        {% endif %}#}
+{##}
+{#{% endblock %}#}

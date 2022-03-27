@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    Delete BLog Post
+{% endblock %}
+
+{% block content %}
+    <main>
+        <div class="main">
+            <div class="container">
+                {% if user.is_authenticated %}
+                    {% if user.id == post.author.id or user.is_superuser %}
+                        <h3>Delete {{ post.title }}?</h3>
+                        <form method="POST">
+                            {% csrf_token %}
+                            <h4>Are you sure?!</h4><br/><br/>
+                            <button class="btn btn-danger">Delete!</button>
+                            <a href="javascript:history.back()" class="btn btn-secondary">Back</a>
+                        </form>
+                    {% endif %}
+                {% else %}
+                    You are not allowed here!
+                {% endif %}
+            </div>
+        </div>
+    </main>
+{% endblock %}

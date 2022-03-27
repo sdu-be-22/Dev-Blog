@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+    <main>
+        <div class="main">
+            <div class="container">
+                <div style="max-width: 1080px; margin: auto; padding-bottom: 2rem; display: flex; justify-content: center; flex-direction: column; align-items: center">
+                    <h2 class="h2_p">Profile</h2>
+                    <h5>{{ page_user.profession }}</h5>
+                    {% if page_user.profile_pic %}
+                        <img src="{{ page_user.profile_pic.url }}" alt="..." width="200px" height="200px"
+                             style="object-fit: cover; display: block; border-radius: 50%; margin-top: 1rem">
+                    {% else %}
+                        <img src="{% static 'myblog/images/default-profile-pic.jpg' %}" alt="..." width="200px" height="200px"
+                             style="object-fit: cover; display: block; border-radius: 50%; margin-top: 1rem">
+                    {% endif %}
+                    <h5 style="margin: 1rem">About me</h5>
+                    <div class="about_me_block" style="margin: 0 20%">
+                        <p style="text-align: justify">{{ page_user.bio }}</p>
+                    </div>
+                    <h5>Details</h5>
+                    <p><b>Name:</b></p>
+                    <h4>{{ page_user.user.first_name }} {{ page_user.user.last_name }}</h4>
+                    <p><b>Total Posts and likes:</b></p>
+                    <h4>{{ user_posts.all.count }} | {{ likes }}</h4>
+                    <p><b>Social links:</b></p>
+                    <div class="icons">
+                        {% if page_user.website_url %}
+                            <a target="_blank" href="{{ page_user.website_url }}"><img
+                                    src="{% static 'myblog/images/icons/web.png' %}" width="36px" height="36px" alt=""
+                                    class="ic_co"></a>
+                        {% endif %}
+                        {% if page_user.facebook_url %}
+                            <a target="_blank" href="{{ page_user.facebook_url }}"><img
+                                    src="{% static 'myblog/images/icons/premium-icon-facebook-3670271.png' %}"
+                                    width="36px" height="36px" alt="" class="ic_co"></a>
+                        {% endif %}
+                        {% if page_user.twitter_url %}
+                            <a target="_blank" href="{{ page_user.twitter_url }}"><img
+                                    src="{% static 'myblog/images/icons/premium-icon-twitter-3669691.png' %}"
+                                    width="36px" height="36px" alt="" class="ic_co"></a>
+                        {% endif %}
+                        {% if page_user.instagram_url %}
+                            <a target="_blank" href="{{ page_user.instagram_url }}"><img
+                                    src="{% static 'myblog/images/icons/premium-icon-instagram-4494468.png' %}"
+                                    width="36px" height="36px" alt="" class="ic_co"></a>
+                        {% endif %}
+                        {% if page_user.pinterest_url %}
+                            <a target="_blank" href="{{ page_user.pinterest_url }}"><img
+                                    src="{% static 'myblog/images/icons/premium-icon-pinterest-2175205.png' %}"
+                                    width="36px" height="36px" alt="" class="ic_co"></a>
+                        {% endif %}
+                        {% if page_user.telegram_url %}
+                            <a target="_blank" href="{{ page_user.telegram_url }}"><img
+                                    src="{% static 'myblog/images/icons/icon-telegram.png' %}" width="36px"
+                                    height="36px" alt="" class="ic_co"></a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+{% endblock %}
