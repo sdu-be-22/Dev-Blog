@@ -2,7 +2,7 @@
 <img src="static/myblog/images/logo-dark.svg" width="60%">
 </p>
 <h3 align="center">Team Dual Berettas</h3>
-<h4 align="center"><a href="http://adilkhan.pythonanywhere.com/">Check It Out</a></h4>
+<h4 align="center"><a href="http://adilkhan.pythonanywhere.com/" target="_blank">Check It Out</a></h4>
 <p align="center" style='margin-top: -12px; font-family: "Roboto", "Lucida Grande", "DejaVu Sans", "Bitstream Vera Sans", Verdana, Arial, sans-serif'>Dev Blog is a blogging application. Create and share your knowledge, thoughts, ideas and experience in various spheres of life.</p>
 
 ## Table of contents
