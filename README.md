@@ -31,13 +31,28 @@ platform.
 
 ## Screenshots
 
-|   Home Page   |
-|:-------------:|
-| ![Home](#src) |
+|                  Home Page                  |
+|:-------------------------------------------:|
+| ![Home](static/myblog/images/home_page.png) |
 
-|   Home Page   | List of Categories Page  |
-|:-------------:|:------------------------:|
-| ![Home](#src) | ![Categories List](#src) |
+|                         Post Details                         |                       Add Post                       |
+|:------------------------------------------------------------:|:----------------------------------------------------:|
+| ![Article Details](static/myblog/images/article_details.png) | ![Add Article](static/myblog/images/add_article.png) |
+
+|                      Profile Page                      |
+|:------------------------------------------------------:|
+| ![Profile Page](static/myblog/images/profile_page.png) |
+
+
+|                      User Posts List                       |                        Liked Posts List                        |
+|:----------------------------------------------------------:|:--------------------------------------------------------------:|
+| ![User Posts List](static/myblog/images/my_posts_page.png) | ![Liked Posts List](static/myblog/images/liked_posts_page.png) |
+
+
+|                        Edit Profile Page                         |                      Settings Page                       |
+|:----------------------------------------------------------------:|:--------------------------------------------------------:|
+| ![Edit Profile Page](static/myblog/images/edit_profile_page.png) | ![Settings Page](static/myblog/images/edit_settings.png) |
+
 
 ## Database Schema
 
@@ -62,6 +77,7 @@ platform.
 * Article Minute Read
 * Article Number of Words (Soon)
 * Article Number of Views
+* Next / Previous Article
 * Article Tags
 * Tag Related Articles
 * Most Liked Articles
