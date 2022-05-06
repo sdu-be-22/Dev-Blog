@@ -6,6 +6,9 @@
     {{ post.title_tag }}
 {% endblock %}
 {% block content %}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css"
+          integrity="sha512-PgQMlq+nqFLV4ylk1gwUOgm6CtIIXkKwaIHp/PAIWHzig/lKZSEGKEysh0TCVbHJXCLN7WetD8TFecIky75ZfQ=="
+          crossorigin="anonymous" referrerpolicy="no-referrer"/>
     <main>
         <div class="main">
             {% if prev_post %}
@@ -30,16 +33,15 @@
                     </p>
                     <hr/>
                     <div style="display: flex; align-items: center; justify-content: space-evenly;">
-                        {% post_to_facebook object_or_url "Post to Facebook!" %}
-                        {% post_to_twitter "New Song: {{object.title}}. Check it out!" object_or_url "Post to Twitter" %}
+                        {% post_to_facebook object_or_url %}
+                        {% post_to_twitter "{{ post.title }}. Check it out!" object_or_url "Post to Twitter" %}
                         {% post_to_gplus object_or_url "Post to Google+!" %}
                         {% post_to_linkedin object_or_url %}
-                        {% send_email object.title "New Song: {{object.title}}. Check it out!" object_or_url "Share via email" %}
-                        {% post_to_reddit "New Song: {{object.title}}" <object_or_url> %}
-                        {% post_to_telegram "New Song: {{object.title}}" <object_or_url> %}
+                        {% send_email object.title "{{ post.title }}. Check it out!" object_or_url "Share via email" %}
+                        {% post_to_telegram "New Song: {{post.title}}" object_or_url %}
                         {% post_to_whatsapp object_or_url "Share via WhatsApp" %}
                         {% save_to_pinterest object_or_url %}
-                        {% add_pinterest_script %} // Required for save_to_pinterest. Add to the end of body tag.
+                        {% add_pinterest_script %}
                     </div>
                     <hr/>
                     {{ post.body|safe }}
