@@ -1,7 +1,7 @@
 // 1. redirect to form
 // 2.
 
-var messageBox = document.querySelector('.js-message');
+// var messageBox = document.querySelector('.js-message');
   var btn = document.querySelector('.js-message-btn');
   var card = document.querySelector('.js-profile-card');
   var closeBtn = document.querySelectorAll('.js-message-close');

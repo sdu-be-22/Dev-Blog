@@ -1,24 +1,15 @@
 import operator
-import posixpath
-from urllib.parse import urljoin
-
 from django.contrib.auth.models import User
 from django.db.models import Count
 from django.shortcuts import render, get_object_or_404, redirect
+from django.utils import timezone
 from django.views.generic import ListView, \
     DetailView, CreateView, UpdateView, DeleteView, View
-
-from blog.settings import BASE_DIR
-from .models import Post, Category, Comment, SubscribedUsers, Profile, Ip
+from taggit.models import Tag
+from myblog.models import Post, Category, Comment, SubscribedUsers, Profile, Ip
 from .forms import PostForm, EditForm, AddCategoryForm, CommentForm, SubscribeUserForm
 from django.urls import reverse_lazy, reverse
 from django.http import HttpResponseRedirect, JsonResponse
-
-
-# Create your views here.
-
-# def home(request):
-#     return render(request, 'home.html', {})
 
 
 def MyPostsView(request, author):
@@ -30,8 +21,21 @@ def MyPostsView(request, author):
 
 def CategoryView(request, cats):
     category_posts = Post.objects.filter(category=cats).order_by('-id')
+    tags_list = Tag.objects.all()
+    cat_menu = Category.objects.all()
     return render(request, 'category_posts.html',
-                  {'cats': cats.title().replace('-', ' '), 'category_posts': category_posts})
+                  {'cats': cats.title().replace('-', ' '), 'category_posts': category_posts, 'tags_list': tags_list,
+                   'cat_menu': cat_menu})
+
+
+def TagPosts(request, slug):
+    tag_id = Tag.objects.get(slug=slug)
+    tag_posts = Post.objects.filter(tags=int(tag_id.id))
+    tags_list = Tag.objects.all()
+    cat_menu = Category.objects.all()
+    return render(request, 'category_posts.html',
+                  {'cats': slug.title().replace('-', ' '), 'category_posts': tag_posts, 'tags_list': tags_list,
+                   'cat_menu': cat_menu})
 
 
 class HomeView(ListView):
@@ -40,11 +44,20 @@ class HomeView(ListView):
 
     def get_context_data(self, *args, **kwargs):
         context = super(HomeView, self).get_context_data(*args, **kwargs)
+        try:
+            if SubscribedUsers.objects.filter(email=self.request.user.email).exists():
+                is_subscribed = True
+            else:
+                is_subscribed = False
+        except:
+            is_subscribed = False
         most_liked_post = Post.objects.annotate(total_likes=Count('likes')).order_by('-total_likes')[0:3]
         excl = []
         for ids in most_liked_post:
             excl.append(ids.id)
-        posts = Post.objects.exclude(id__in=excl).order_by('-post_date')
+        time_now = timezone.now()
+        posts = Post.objects.exclude(id__in=excl).order_by('-post_date').filter(
+            publish__lte=time_now)  # lte means lesser than or equal to
         cat_menu = Category.objects.all()
         posts_count = Post.objects.count()
         list_of_users_and_likes = {}
@@ -64,12 +77,15 @@ class HomeView(ListView):
             max_user_likes += str(i) + ':' + sorted_d.get(i) + ';'
             iterator += 1
         users = User.objects.all()
+        tags_list = Tag.objects.all()
         context["cat_menu"] = cat_menu
+        context["tags_list"] = tags_list
         context["most_liked_post"] = most_liked_post
         context["user_likes"] = max_user_likes
         context["users"] = users
         context["posts"] = posts
         context["posts_count"] = posts_count
+        context["is_subscribed"] = is_subscribed
         return context
 
 
@@ -86,7 +102,11 @@ class ArticleDetailView(DetailView):
     template_name = 'article_details.html'
 
     def get_context_data(self, *args, **kwargs):
-        stuff = get_object_or_404(Post, id=self.kwargs['pk'])
+        stuff = get_object_or_404(Post, slug=self.kwargs['slug'])
+        related_articles = Post.objects.filter(category=stuff.category).order_by('?').exclude(slug=self.kwargs['slug'])[
+                           0:3]
+        prev_post = Post.objects.filter(id__gt=stuff.id).first()
+        next_post = Post.objects.filter(id__lt=stuff.id).last()
         ip = get_client_ip(self.request)
 
         if Ip.objects.filter(ip=ip).exists():
@@ -106,22 +126,10 @@ class ArticleDetailView(DetailView):
         context["cat_menu"] = cat_menu
         context["total_likes"] = total_likes
         context["liked"] = liked
+        context["prev_post"] = prev_post
+        context["next_post"] = next_post
+        context["related_articles"] = related_articles
         return context
-
-
-# def AddCommentView(request, pk):
-#     if request.method == "POST":
-#         # post = get_object_or_404(Post, id=request.POST.get('post_id'))
-#         if request.POST.get('body'):
-#             saveb = Comment()
-#             saveb.body = request.POST.get('body')
-#             saveb.save()
-#         if request.POST.get('name'):
-#             saven = Comment()
-#             saven.name = request.POST.get('name')
-#             saven.save()
-#     return HttpResponseRedirect(reverse('article-detail', args=[str(pk)]))
-#
 
 
 class AddCommentView(CreateView):
@@ -129,23 +137,11 @@ class AddCommentView(CreateView):
     form_class = CommentForm
 
     def form_valid(self, form):
-        form.instance.post_id = self.kwargs['pk']
+        form.instance.post_slug = self.kwargs['slug']
         return super().form_valid(form)
 
-    # def get(self, request, *args, **kwargs):
-    #     if request.method == "POST":
-    #         # post = get_object_or_404(Post, id=request.POST.get('post_id'))
-    #         if request.POST.get('body'):
-    #             saveb = Comment()
-    #             saveb.body = request.POST.get('body')
-    #             saveb.save()
-    #         if request.POST.get('name'):
-    #             saven = Comment()
-    #             saven.name = request.POST.get('name')
-    #             saven.save()
-
     def get_success_url(self):
-        return reverse('article-detail', kwargs={'pk': str(self.kwargs['pk'])})
+        return reverse('article-detail', kwargs={'slug': str(self.kwargs['slug'])})
 
 
 class AddPostView(CreateView):
@@ -155,8 +151,10 @@ class AddPostView(CreateView):
 
     def get_context_data(self, *args, **kwargs):
         cat_menu = Category.objects.all()
+        tags_list = Tag.objects.all()
         context = super(AddPostView, self).get_context_data(*args, **kwargs)
         context["cat_menu"] = cat_menu
+        context["tags_list"] = tags_list
         return context
 
 
@@ -182,7 +180,13 @@ class UpdatePostView(UpdateView):
     model = Post
     form_class = EditForm
     template_name = 'update_post.html'
-    # fields = ['title', 'title_tag', 'body']
+    tags_list = Tag.objects.all()
+
+    def get_context_data(self, *args, **kwargs):
+        tags_list = Tag.objects.all()
+        context = super(UpdatePostView, self).get_context_data(*args, **kwargs)
+        context["tags_list"] = tags_list
+        return context
 
 
 class DeletePostView(DeleteView):
@@ -200,8 +204,8 @@ def UserLikedPostsView(request, user):
     return render(request, 'user_liked_posts.html', {'liked_posts': liked_posts})
 
 
-def LikeView(request, pk):
-    post = get_object_or_404(Post, id=request.POST.get('post_id'))
+def LikeView(request, slug):
+    post = get_object_or_404(Post, slug=request.POST.get('post_slug'))
     liked = False
     if post.likes.filter(id=request.user.id).exists():
         post.likes.remove(request.user)
@@ -209,7 +213,7 @@ def LikeView(request, pk):
     else:
         post.likes.add(request.user)
         liked = True
-    return HttpResponseRedirect(reverse('article-detail', args=[str(pk)]))
+    return HttpResponseRedirect(reverse('article-detail', args=[str(slug)]))
 
 
 class PostsJsonView(View):

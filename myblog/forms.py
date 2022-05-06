@@ -1,22 +1,22 @@
+from datetime import datetime
+
 from django import forms
+from taggit.models import Tag
+from django.forms.models import model_to_dict
+
 from .models import Post, Category, Comment, SubscribedUsers
 
-
-# choices = [('coding', 'coding'), ('sports', 'sports'), ('entertainment', 'entertainment')]
+choices = [('coding', 'coding'), ('sports', 'sports'), ('entertainment', 'entertainment')]
 
 
 class PostForm(forms.ModelForm):
     class Meta:
         model = Post
-        fields = ('title', 'title_tag', 'author', 'category', 'header_image', 'body', 'snippet')
+        fields = ('title', 'title_tag', 'author', 'category', 'tags', 'header_image', 'body', 'snippet', 'publish')
 
-        choices = Category.objects.all().values_list('name', 'name')
-        choice_list = []
-
-        for item in choices:
-            choice_list.append(item)
         widgets = {
             'title': forms.TextInput(attrs={'class': 'form-control'}),
+            'tags': forms.TextInput(attrs={'type': 'hidden'}),
             'header_image': forms.FileInput(attrs={'class': 'form-control'}),
             'title_tag': forms.TextInput(attrs={'class': 'form-control'}),
             'snippet': forms.Textarea(attrs={'class': 'form-control', 'rows': '5'}),
@@ -28,8 +28,10 @@ class PostForm(forms.ModelForm):
 class EditForm(forms.ModelForm):
     class Meta:
         model = Post
-        fields = ('title', 'title_tag', 'snippet', 'body')
-
+        fields = ('title', 'title_tag', 'tags', 'snippet', 'body')
+        # choices = []
+        # for tag in Tag.objects.all():
+        #     choices.append(tag.name)
         widgets = {
             'title': forms.TextInput(attrs={'class': 'form-control'}),
             'title_tag': forms.TextInput(attrs={'class': 'form-control'}),

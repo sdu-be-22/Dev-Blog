@@ -28,10 +28,15 @@
 
                     </div>
                     {% if user.is_authenticated %}
-                        <h1>Add Post...</h1>
+                        <h1 align="center">Add Post</h1>
                         <form method="POST" enctype="multipart/form-data">
                             {% csrf_token %}
                             {{ form.media }}
+                            {% if form.errors %}
+                                <div class="alert alert-danger">
+                                    {{ form.errors }}
+                                </div>
+                            {% endif %}
                             <p>
                                 <label for="id_title">{{ form.title.label }}:</label>
                                 {{ form.title }}
@@ -64,8 +69,23 @@
                                 </select>
                             </p>
                             <p>
+                                <label for="tags">{{ form.tags.label }}:</label>
+                                <select id="select1" class="selectpicker form-control" multiple name="tags">
+                                    {% for tag in tags_list %}
+                                        <option value="{{ tag.slug }}">{{ tag.name }}</option>
+                                    {% endfor %}
+                                </select>
+                            </p>
+                            <p>
                                 <label for="myCheckbox" class="btn btn-secondary">New Category</label>
                                 <input type="checkbox" id="myCheckbox" hidden>
+                            </p>
+                            {{ form.tags }}
+                            <p>
+                                <label for="id_publish">Publish date:</label>
+                                <input placeholder="Select date" type="datetime-local" min="{% now "Y-m-d\TH:i:s" %}"
+                                       value="{% now "Y-m-d\TH:i:s" %}"
+                                       id="id_publish" name="publish" class="form-control">
                             </p>
                             <p>
                                 <label for="id_body">Body:</label>
@@ -99,6 +119,76 @@
                     modal.style.display = "none";
                     $('#myCheckbox').prop("checked", false);
                 }
+            }
+        }
+        {#$('.selectpicker').selectpicker(#}
+        {#    noneResultsText="{0}"#}
+        {#);#}
+        $('.selectpicker').change(function () {
+            var selectedItem = $('.selectpicker').val();
+            document.getElementById('id_tags').value = selectedItem;
+        });
+
+        $(function () {
+            var content = "<input type='text' class='bss-input' onKeyDown='event.stopPropagation();' onKeyPress='addSelectInpKeyPress(this,event)' onClick='event.stopPropagation()' placeholder='Add item'> <span class='glyphicon glyphicon-plus addnewicon' onClick='addSelectItem(this,event,1);'></span>";
+
+            var divider = $('<option/>')
+                .addClass('dropdown-divider')
+                .data('divider', true);
+
+
+            var addoption = $('<option/>', {class: 'addItem'})
+                .data('content', content)
+
+            $('.selectpicker')
+                //.append(divider)
+                .prepend(addoption)
+                .selectpicker();
+
+        });
+
+        function appendInput() {
+            var content = "<input type='text' class='bss-input' onKeyDown='event.stopPropagation();' onKeyPress='addSelectInpKeyPress(this,event)' onClick='event.stopPropagation()' placeholder='Add tag'> <span class='addnewicon' onClick='addSelectItem(this,event,1);'></span>";
+            var inputEle = $('.addItem.dropdown-item span.text');
+            $('.addItem.dropdown-item span.text').each(function (index, el) {
+                if ($(this).text() == '') {
+                    $(this).html(content);
+                }
+            });
+        }
+
+        $('body').on('click', '.dropdown-toggle', function (event) {
+            event.preventDefault();
+            appendInput();
+        });
+
+        function addSelectItem(t, ev) {
+            ev.stopPropagation();
+
+            var bs = $(t).closest('.bootstrap-select')
+            var txt = bs.find('.bss-input').val().replace(/[|]/g, "");
+            var txt = $(t).prev().val().replace(/[|]/g, "");
+            if ($.trim(txt) == '') return;
+
+            // Changed from previous version to cater to new
+            // layout used by bootstrap-select.
+            var p = bs.find('select');
+            var o = $('option', p).eq(-2);
+            o.before($("<option>", {"selected": false, "text": txt}));
+            p.selectpicker('refresh');
+            appendInput();
+        }
+
+        function addSelectInpKeyPress(t, ev) {
+            ev.stopPropagation();
+
+            // do not allow pipe character
+            if (ev.which == 124) ev.preventDefault();
+
+            // enter character adds the option
+            if (ev.which == 13) {
+                ev.preventDefault();
+                addSelectItem($(t).next(), ev);
             }
         }
     </script>

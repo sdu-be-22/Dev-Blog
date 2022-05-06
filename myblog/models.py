@@ -2,15 +2,19 @@ import os
 import posixpath
 import random
 from audioop import reverse
+from datetime import datetime
 
 from PIL import Image
 from django.db import models
 from django.contrib.auth.models import User
+from django.template.defaultfilters import slugify
 from django.urls import reverse
 from ckeditor.fields import RichTextField
 
 from blog import settings
 
+from django.utils import timezone
+from taggit.managers import TaggableManager
 
 class Ip(models.Model):
     ip = models.CharField(max_length=100)
@@ -34,15 +38,18 @@ class Category(models.Model):
 
 class Post(models.Model):
     title = models.CharField(max_length=255)
+    slug = models.SlugField(null=True, unique=True)
     header_image = models.ImageField(null=True, blank=True, upload_to="images/")
     title_tag = models.CharField(max_length=255)
     author = models.ForeignKey(User, on_delete=models.CASCADE)
     body = models.TextField(blank=True, null=True)
     post_date = models.DateTimeField(auto_now_add=True)
+    publish = models.DateTimeField(default=timezone.now)
     category = models.CharField(max_length=255, default='coding')
     snippet = models.TextField(max_length=255)
     likes = models.ManyToManyField(User, related_name='blog_posts')
     views = models.ManyToManyField(Ip, related_name="post_views", verbose_name="Views", blank=True)
+    tags = TaggableManager()
 
     class Meta:
         verbose_name_plural = "posts"
@@ -59,6 +66,11 @@ class Post(models.Model):
     @staticmethod
     def get_absolute_url():
         return reverse('home')
+
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            self.slug = slugify(self.title)
+        return super().save(*args, **kwargs)
 
 
 def user_directory_path(instance, filename):

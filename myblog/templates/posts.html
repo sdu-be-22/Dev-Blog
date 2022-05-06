@@ -22,17 +22,17 @@
                     {% if user.is_authenticated %}
                         {% if user.id == post.author.id or user.is_superuser %}
                             <div style="float: right">
-                                <a href="{% url 'update_post' post.pk %}" class="blog-topic text-tiny"
-                                   >Edit</a>
+                                <a href="{% url 'update_post' post.slug %}" class="blog-topic text-tiny"
+                                >Edit</a>
                                 <!-- <a href="{% url 'home' %}">Back</a> -->
-                                <a href="{% url 'delete_post' post.pk %}" class="blog-topic text-tiny"
-                                   >Delete</a>
+                                <a href="{% url 'delete_post' post.slug %}" class="blog-topic text-tiny"
+                                >Delete</a>
                             </div>
                         {% endif %}
                     {% endif %}
 
                     <h3>
-                        <a href="{% url 'article-detail' post.pk %}" class="nb_h3">
+                        <a href="{% url 'article-detail' post.slug %}" class="nb_h3">
                             {{ post.title }}
                         </a>
                     </h3>
@@ -56,14 +56,19 @@
                         <div class="wrapper">
                             <a href="{% url 'show_profile_page' post.author.profile.id %}"
                                class="nb_h4">{{ post.author.first_name }} {{ post.author.last_name }}</a>
-
                             <p class="text-sm">
-                                <time datetime="{{ post.post_date }}">{{ post.post_date|date }}</time>
+                                <time datetime="{{ post.publish }}">{{ post.publish|date }}</time>
                                 <span class="separator"></span>
                                 <ion-icon name="time-outline"></ion-icon>
-                                <time datetime="{{ post.post_date|timesince }}">{{ post.post_date|timesince }} ago
+                                <time datetime="{{ post.publish|timesince }}">{{ post.publish|timesince }} ago
                                 </time>
+                                {#                                {{post.tags.all|join:", "}}#}
                             </p>
+                            <div>
+                                {% for tag in post.tags.all %}
+                                    <a href="{% url 'tag_posts' tag.slug %}" class="hashtag">#{{ tag.name }}</a>
+                                {% endfor %}
+                            </div>
                         </div>
                     </div>
                 </div>

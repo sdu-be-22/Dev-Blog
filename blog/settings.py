@@ -26,10 +26,6 @@ SECRET_KEY = 'django-insecure-d2^*%h8os1sp&+^4#1n6f2nh1h4uh8e8bx(@+92pz9vy1i8-g$
 DEBUG = True
 
 ALLOWED_HOSTS = []
-
-
-# Application definition
-
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -42,7 +38,14 @@ INSTALLED_APPS = [
     'ckeditor',
     'tinymce',
     'ckeditor_uploader',
+    'taggit',
+    'api',
+    'rest_framework',
 ]
+
+
+# Application definition
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -142,6 +145,22 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 LOGIN_REDIRECT_URL = 'home'
 LOGOUT_REDIRECT_URL = 'home'
+
+
+TINYMCE_DEFAULT_CONFIG = {
+    "theme": "silver",
+    "height": 500,
+    "menubar": False,
+    "plugins": "advlist,autolink,lists,link,image,charmap,print,preview,anchor,"
+    "searchreplace,visualblocks,code,fullscreen,insertdatetime,media,table,paste,"
+    "code,help,wordcount",
+    "toolbar": "undo redo | formatselect | "
+    "bold italic backcolor | alignleft aligncenter "
+    "alignright alignjustify | bullist numlist outdent indent | "
+    "removeformat | help",
+}
+
+TINYMCE_SPELLCHECKER = True
 
 
 CKEDITOR_CONFIGS = {

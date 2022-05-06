@@ -57,7 +57,12 @@ def split(value, key):
     """
     return value.split(key)[1]
 
+# read_time_sec = read_time_min * 60
+    # read_time = datetime.timedelta(minutes=read_time_min)
+    # minutes = int(read_time.seconds/60)
 
+
+@register.filter(name='count_words')
 def count_words(html_string):
     word_string = strip_tags(html_string)
     matching_words = re.findall(r'\w+', word_string)
@@ -68,8 +73,5 @@ def count_words(html_string):
 @register.filter(name='get_read_time')
 def get_read_time(html_string):
     count = count_words(html_string)
-    read_time_min = math.ceil(count / 200.0)  # assuming 200 words per minute reading
-    # read_time_sec = read_time_min * 60
-    read_time = datetime.timedelta(minutes=read_time_min)
-    minutes = int(read_time.seconds/60)
-    return minutes
+    read_time_min = math.ceil(count / 160.0)  # assuming 160 words per minute reading
+    return int(read_time_min)

@@ -4,49 +4,28 @@
 {% block title %}
     {{ post.title_tag }}
 {% endblock %}
-
 {% block content %}
     <main>
         <div class="main">
+            {% if prev_post %}
+                <a href="{% url 'article-detail' prev_post.slug %}" class="previous_post_btn"></a>
+            {% endif %}
+            {% if next_post %}
+                <a href="{% url 'article-detail' next_post.slug %}" class="next_post_btn"></a>
+            {% endif %}
+
             <div class="container">
                 <div style="max-width: 1080px; margin: auto">
                     <h3 class="nb_h1">{{ post.title }}</h3>
                     <p class="article_info">By:
                         <a href="{% url 'show_profile_page' post.author.profile.id %}">{{ post.author.first_name }}
-                        {{ post.author.last_name }}</a>  &#183;
-                        {{ post.post_date }} &#183;
-{#                        {% if post.author.profile.website_url %}#}
-{#                            <a target="_blank" href="{{ post.author.profile.website_url }}"><img#}
-{#                                    src="{% static 'myblog/images/icons/web.png' %}" width="36px" height="36px" alt=""#}
-{#                                    class="ic_co"></a>#}
-{#                        {% endif %}#}
-{#                        {% if post.author.profile.facebook_url %}#}
-{#                            <a target="_blank" href="{{ post.author.profile.facebook_url }}"><img#}
-{#                                    src="{% static 'myblog/images/icons/premium-icon-facebook-3670271.png' %}"#}
-{#                                    width="36px" height="36px" alt="" class="ic_co"></a>#}
-{#                        {% endif %}#}
-{#                        {% if post.author.profile.twitter_url %}#}
-{#                            <a target="_blank" href="{{ post.author.profile.twitter_url }}"><img#}
-{#                                    src="{% static 'myblog/images/icons/premium-icon-twitter-3669691.png' %}"#}
-{#                                    width="36px" height="36px" alt="" class="ic_co"></a>#}
-{#                        {% endif %}#}
-{#                        {% if post.author.profile.instagram_url %}#}
-{#                            <a target="_blank" href="{{ post.author.profile.instagram_url }}"><img#}
-{#                                    src="{% static 'myblog/images/icons/premium-icon-instagram-4494468.png' %}"#}
-{#                                    width="36px" height="36px" alt="" class="ic_co"></a>#}
-{#                        {% endif %}#}
-{#                        {% if post.author.profile.pinterest_url %}#}
-{#                            <a target="_blank" href="{{ post.author.profile.pinterest_url }}"><img#}
-{#                                    src="{% static 'myblog/images/icons/premium-icon-pinterest-2175205.png' %}"#}
-{#                                    width="36px" height="36px" alt="" class="ic_co"></a>#}
-{#                        {% endif %}#}
-{#                        {% if post.author.profile.telegram_url %}#}
-{#                            <a target="_blank" href="{{ post.author.profile.telegram_url }}"><img#}
-{#                                    src="{% static 'myblog/images/icons/icon-telegram.png' %}" width="16px"#}
-{#                                    height="16px" alt="" class="ic_co2"></a>#}
-{#                        {% endif %}#}
-                        Read time: {{ post.body|get_read_time }} minute{{ post.body|get_read_time|pluralize }}
-                        <span class="icon-box" style="align-items: center; float: right;"><ion-icon name="eye-outline" style="margin-bottom: -2px"></ion-icon> {{ post.total_views }} views</span>
+                            {{ post.author.last_name }}</a> &#183;
+                        {{ post.publish }} &#183;
+                        {{ post.body|count_words }} words &#183;
+                        {{ post.body|get_read_time }} minute{{ post.body|get_read_time|pluralize }} read
+                        <span class="icon-box" style="align-items: center; float: right;"><ion-icon name="eye-outline"
+                                                                                                    style="margin-bottom: -2px"></ion-icon>
+                            {{ post.total_views }} views</span>
                     </p>
                     <hr/>
                     {{ post.body|safe }}
@@ -60,29 +39,29 @@
                     {% endif %}
                     <a href="{% url 'home' %}" class="btn btn-secondary">Back</a>
                     <hr>
-                    <form action="{% url 'like_post' post.pk %}" method="POST">
+                    <form action="{% url 'like_post' post.slug %}" method="POST">
                         {% if user.is_authenticated %}
                             {% csrf_token %}
                             {% if liked %}
                                 <div style="display: flex; align-items: end">
-                                    <button type="submit" name="post_id" value="{{ post.id }}"
+                                    <button type="submit" name="post_slug" value="{{ post.slug }}"
                                             class="btn btn-danger btn-sm" style="padding: 2px; align-items: center">
                                         <ion-icon name="heart-dislike"
                                                   style="width: 1rem; height: 1rem; margin-bottom: -3px"></ion-icon>
                                         Unlike
                                     </button>
-                                    <h5 style="display: block; margin: 0; padding-left: 4px"> &#183; {{ total_likes }}
+                                    <h5 style="display: block; margin: 0; padding-left: 4px">  {{ total_likes }}
                                         Likes</h5>
                                 </div>
                             {% else %}
                                 <div style="display: flex; align-items: center;">
-                                    <button type="submit" name="post_id" value="{{ post.id }}"
+                                    <button type="submit" name="post_slug" value="{{ post.slug }}"
                                             class="btn btn-primary btn-sm" style="padding: 2px; align-items: center">
                                         <ion-icon style="width: 1rem; height: 1rem; margin-bottom: -3px"
                                                   name="heart"></ion-icon>
                                         Like
                                     </button>
-                                    <h5 style="display: block; margin: 0; padding-left: 4px"> &#183; {{ total_likes }}
+                                    <h5 style="display: block; margin: 0; padding-left: 4px">  {{ total_likes }}
                                         Likes</h5>
                                 </div>
                             {% endif %}
@@ -93,63 +72,137 @@
 
                     <br>
                     <div class="comment-section">
-                        {% if not post.comments.all %}
-                            <h4>No Comments Yet...</h4>
-                        {% else %}
-                            {% if user.is_authenticated %}
-                                <form action="{% url 'add_comment' post.pk %}" method="POST">
-                                    {% csrf_token %}
-                                    <input type="hidden" id="id_comment_name" name="name" class="form-control">
-                                    <p>
-                                        <label for="id_comment_body">Comment:</label>
-                                        <textarea type="text" id="id_comment_body" name="body" class="form-control">
+                        {% if user.is_authenticated %}
+                            <form action="{% url 'add_comment' post.slug %}" method="POST">
+                                {% csrf_token %}
+                                <input type="hidden" id="id_comment_name" name="name" class="form-control">
+                                <p>
+                                    <label for="id_comment_body">Comment:</label>
+                                    <textarea type="text" id="id_comment_body" name="body" class="form-control">
                                     </textarea>
-                                    </p>
-                                    <input type="hidden" id="author_id" name="user" class="form-control">
-                                    <button class="nb_btn nb_btn-secondary">Add Comment</button>
-                                </form>
-                            {% else %}
-                                <h4>Login to leave comment</h4>
-                            {% endif %}
-                            <div style="display: flex; align-items: center; justify-content: center"><h4>
-                                {{ post.comments.all.count }} comment{{ post.comments.all.count|pluralize }}</h4></div>
-                            {% for comment in post.comments.all reversed %}
-                                <div class="comment-card">
-                                    <div class="blog-content-wrapper">
-                                        <div class="wrapper-flex">
-                                            <div class="profile-wrapper">
-                                                {% if comment.user.profile.profile_pic %}
-                                                    <img src="{{ comment.user.profile.profile_pic.url }}"
-                                                         alt="author's avatar" width="50" height="50"
-                                                         style="object-fit: cover">
-                                                {% else %}
-                                                    <img src="{% static 'myblog/images/default-profile-pic.jpg' %}"
-                                                         alt="author's avatar" width="50" height="50">
-                                                {% endif %}
-                                            </div>
-
-                                            <div class="wrapper">
-                                                <a href="{% url 'show_profile_page' comment.user.profile.id %}"
-                                                   class="nb_h4">{{ comment.name }}</a>
-
-                                                <p class="text-sm">
-                                                    <time datetime="{{ comment.date_added }}">{{ comment.date_added|date }}</time>
-                                                    <span class="separator"></span>
-                                                    <ion-icon name="time-outline"></ion-icon>
-                                                    <time datetime="{{ comment.date_added|timesince }}">{{ comment.date_added|time }}
-                                                        - {{ comment.date_added|timesince }}
-                                                        ago
-                                                    </time>
-                                                </p>
-                                            </div>
+                                </p>
+                                <input type="hidden" id="author_id" name="user" class="form-control">
+                                <button class="nb_btn nb_btn-secondary">Add Comment</button>
+                            </form>
+                        {% else %}
+                            <h4>Login to leave comment</h4>
+                        {% endif %}
+                        <div style="display: flex; align-items: center; justify-content: center"><h4>
+                            {{ post.comments.all.count }} comment{{ post.comments.all.count|pluralize }}</h4></div>
+                        {% for comment in post.comments.all reversed %}
+                            <div class="comment-card">
+                                <div class="blog-content-wrapper">
+                                    <div class="wrapper-flex">
+                                        <div class="profile-wrapper">
+                                            {% if comment.user.profile.profile_pic %}
+                                                <img src="{{ comment.user.profile.profile_pic.url }}"
+                                                     alt="author's avatar" width="50" height="50"
+                                                     style="object-fit: cover">
+                                            {% else %}
+                                                <img src="{% static 'myblog/images/default-profile-pic.jpg' %}"
+                                                     alt="author's avatar" width="50" height="50">
+                                            {% endif %}
                                         </div>
-                                        <div class="comment-block">
-                                            <p>{{ comment.body }}</p>
+
+                                        <div class="wrapper">
+                                            <a href="{% url 'show_profile_page' comment.user.profile.id %}"
+                                               class="nb_h4">{{ comment.name }}</a>
+
+                                            <p class="text-sm">
+                                                <time datetime="{{ comment.date_added }}">{{ comment.date_added|date }}</time>
+                                                <span class="separator"></span>
+                                                <ion-icon name="time-outline"></ion-icon>
+                                                <time datetime="{{ comment.date_added|timesince }}">{{ comment.date_added|time }}
+                                                    - {{ comment.date_added|timesince }}
+                                                    ago
+                                                </time>
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <div class="comment-block">
+                                        <p>{{ comment.body }}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                    <h3 class="nb_h1" style="text-align: center">Related Articles</h3>
+                    <div style="display: flex; flex-direction: row;">
+                        {% for post in related_articles %}
+                            <div class="blog-card" style="margin: 1rem;display: flex;flex-direction: column;">
+                                <div class="blog-card-banner">
+                                    {% if post.header_image %}
+                                        <img src="{{ post.header_image.url }}"
+                                             alt="..."
+                                             width="250" class="blog-banner-img">
+                                    {% else %}
+                                        <img src="{% random_image "images/random_images/" %}"
+                                             alt="Building microservices with Dropwizard, MongoDB & Docker"
+                                             width="250" class="blog-banner-img">
+                                    {% endif %}
+                                </div>
+
+                                <div class="blog-content-wrapper">
+                                    <button class="blog-topic text-tiny">{{ post.category|capfirst }}</button>
+                                    {% if user.is_authenticated %}
+                                        {% if user.id == post.author.id or user.is_superuser %}
+                                            <div style="float: right">
+                                                <a href="{% url 'update_post' post.slug %}" class="blog-topic text-tiny"
+                                                >Edit</a>
+                                                <!-- <a href="{% url 'home' %}">Back</a> -->
+                                                <a href="{% url 'delete_post' post.slug %}" class="blog-topic text-tiny"
+                                                >Delete</a>
+                                            </div>
+                                        {% endif %}
+                                    {% endif %}
+
+                                    <h3>
+                                        <a href="{% url 'article-detail' post.slug %}" class="nb_h3">
+                                            {{ post.title }}
+                                        </a>
+                                    </h3>
+
+                                    <p class="blog-text">
+                                        {{ post.snippet }}
+                                    </p>
+
+                                    <div class="wrapper-flex">
+
+                                        <div class="profile-wrapper">
+                                            {% if post.author.profile.profile_pic %}
+                                                <img src="{{ post.author.profile.profile_pic.url }}"
+                                                     alt="author's avatar" width="50" height="50"
+                                                     style="object-fit: cover">
+                                            {% else %}
+                                                <img src="{% static 'myblog/images/default-profile-pic.jpg' %}"
+                                                     alt="author's avatar" width="50" height="50"
+                                                     style="object-fit: cover">
+                                            {% endif %}
+                                        </div>
+
+                                        <div class="wrapper">
+                                            <a href="{% url 'show_profile_page' post.author.profile.id %}"
+                                               class="nb_h4">{{ post.author.first_name }} {{ post.author.last_name }}</a>
+                                            <p class="text-sm">
+                                                <time datetime="{{ post.publish }}">{{ post.publish|date }}</time>
+                                                <span class="separator"></span>
+                                                <ion-icon name="time-outline"></ion-icon>
+                                                <time datetime="{{ post.publish|timesince }}">{{ post.publish|timesince }}
+                                                    ago
+                                                </time>
+                                                {#                                {{post.tags.all|join:", "}}#}
+                                            </p>
+                                            <div>
+                                                {% for tag in post.tags.all %}
+                                                    <a href="{% url 'tag_posts' tag.slug %}"
+                                                       class="hashtag">#{{ tag.name }}</a>
+                                                {% endfor %}
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
-                            {% endfor %}
-                        {% endif %}
+                            </div>
+                        {% endfor %}
                     </div>
                 </div>
             </div>
