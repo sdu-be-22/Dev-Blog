@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'taggit',
     'api',
     'rest_framework',
+    'django_social_share',
 ]
 
 

@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load social_share %}
 {% load static %}
 {% load custom_tags %}
 {% block title %}
@@ -27,6 +28,19 @@
                                                                                                     style="margin-bottom: -2px"></ion-icon>
                             {{ post.total_views }} views</span>
                     </p>
+                    <hr/>
+                    <div style="display: flex; align-items: center; justify-content: space-evenly;">
+                        {% post_to_facebook object_or_url "Post to Facebook!" %}
+                        {% post_to_twitter "New Song: {{object.title}}. Check it out!" object_or_url "Post to Twitter" %}
+                        {% post_to_gplus object_or_url "Post to Google+!" %}
+                        {% post_to_linkedin object_or_url %}
+                        {% send_email object.title "New Song: {{object.title}}. Check it out!" object_or_url "Share via email" %}
+                        {% post_to_reddit "New Song: {{object.title}}" <object_or_url> %}
+                        {% post_to_telegram "New Song: {{object.title}}" <object_or_url> %}
+                        {% post_to_whatsapp object_or_url "Share via WhatsApp" %}
+                        {% save_to_pinterest object_or_url %}
+                        {% add_pinterest_script %} // Required for save_to_pinterest. Add to the end of body tag.
+                    </div>
                     <hr/>
                     {{ post.body|safe }}
                     <hr>
